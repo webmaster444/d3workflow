@@ -111,21 +111,30 @@ for(index in jsondata[0].items){
     var item = jsondata[0].items[index];
     if(item.type=='start'){
         drawRoundRect(svg,30,30,120,40,item.title,defColor);
+        svg.append("path")
+        .attr("d", drawArrow(153, 50, 45));            
     }
     if(item.type=='junction'){
-        drawJunctionOperator(svg,200,30,defColor,15);
+        drawJunctionOperator(svg,200,35,defColor,15);
+        svg.append("path")
+        .attr("d", drawArrow(238, 50, 52));
     }
 
     if(item.type=='decision'){
-        drawRotatedRoundSquare(svg,260,30,60,defColor,5,item.title);
+        drawRotatedRoundSquare(svg,260,40,60,defColor,5,item.title);
+        svg.append("path")
+            .attr("d", drawArrow(383, 50, 50));
     }
 
     if(item.type=='process-simple'&& item.id==4){        
         drawRect(svg,440,30,120,40,defColor,item.title);
+        svg.append("path")
+        .attr("d", drawArrow(563, 50, 70));
     }
 
     if(item.type=='process-simple'&& item.id==5){        
         drawRect(svg,280,130,120,40,defColor,item.title);
+
     }
 
     if(item.type=='finish'){        
@@ -211,11 +220,22 @@ function drawJunctionOperator(container, x, y, color, rx){
         .attr('stroke-width','3px');
 }
 //draw arrow
-function drawArrow(x, y, width, height, ahwidth) {
+function drawArrow(x, y, width) {
     var qVH = 3;
     var ahwidth = 5;
     return "M" + x + "," + y +
         "h" + (width - ahwidth) +
+        "v" + (-qVH) +
+        "L" + (x + width) + ',' + y +
+        "L" + (x + width - ahwidth) + ',' + (y + qVH) +
+        "v" + (-qVH);        
+}
+
+function drawArrow(startX, startY, endX, endY) {
+    var qVH = 3;
+    var ahwidth = 5;
+    return "M" + startX + "," + startY +
+        "h" + (endX - startX) +
         "v" + (-qVH) +
         "L" + (x + width) + ',' + y +
         "L" + (x + width - ahwidth) + ',' + (y + qVH) +
