@@ -32,3 +32,7 @@ text{
 circle{
 	fill: none;
 }
+
+rect.rohumbus{
+	transform: rotate(45deg);
+}

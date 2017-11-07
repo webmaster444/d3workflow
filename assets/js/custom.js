@@ -121,7 +121,7 @@ for(index in jsondata[0].items){
     }
 
     if(item.type=='decision'){
-        drawRotatedRoundSquare(svg,260,40,60,defColor,5,item.title);
+        drawRohumbus(svg,260,40,60,defColor,5,item.title);
         svg.append("path").attr("d", drawArrow(383, 50, 50));
         svg.append("path").attr("d", drawArrow2(340, 95, 340,120));        
     }
@@ -142,9 +142,6 @@ for(index in jsondata[0].items){
         drawRoundRect(svg,640,30,120,40,item.title,priColor);
     }
 }
-// jsondata.items.each(function(d){
-
-// })
 
 //draw rectangle
 function drawRect(container, x,y, width, height,color,text){
@@ -181,7 +178,7 @@ function drawRoundRect(container, x, y, width, height, text,color, rx){
 }
 
 //draw round square and rotate
-function drawRotatedRoundSquare(container, x, y, width, color, rx,text){
+function drawRohumbus(container, x, y, width, color, rx,text){
     var g = container.append('g').attr('class','g_wrapper').attr('transform',function(){
         return "translate("+x+","+y+")";        
     });
@@ -220,6 +217,7 @@ function drawJunctionOperator(container, x, y, color, rx){
         .attr('stroke',defColor)
         .attr('stroke-width','3px');
 }
+
 //draw arrow
 function drawArrow(x, y, width) {
     var qVH = 3;
@@ -278,4 +276,8 @@ function wrap(text, width) {
       }
     }
   });
+}
+
+function parseJson(jsondata){
+    
 }
