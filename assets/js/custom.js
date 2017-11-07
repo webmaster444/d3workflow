@@ -231,16 +231,16 @@ function drawArrow(x, y, width) {
         "v" + (-qVH);        
 }
 
-function drawArrow(startX, startY, endX, endY) {
-    var qVH = 3;
-    var ahwidth = 5;
-    return "M" + startX + "," + startY +
-        "h" + (endX - startX) +
-        "v" + (-qVH) +
-        "L" + (x + width) + ',' + y +
-        "L" + (x + width - ahwidth) + ',' + (y + qVH) +
-        "v" + (-qVH);        
-}
+// function drawArrow(startX, startY, endX, endY) {
+//     var qVH = 3;
+//     var ahwidth = 5;
+//     return "M" + startX + "," + startY +
+//         "h" + (endX - startX) +
+//         "v" + (-qVH) +
+//         "L" + (x + width) + ',' + y +
+//         "L" + (x + width - ahwidth) + ',' + (y + qVH) +
+//         "v" + (-qVH);        
+// }
 
 function wrap(text, width) {
   text.each(function() {
