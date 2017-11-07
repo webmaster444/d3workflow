@@ -6,106 +6,8 @@ var svg = d3.select("#content").append("svg")
 
 var width = 970 - 30;
 var height = 570 - 10;
-var jsondata = [{
-  "items": {
-    "1": {
-      "title": "Buyer receives payment notification",
-      "id": 1,
-      "description": "",
-      "type": "start",
-      "stream": 1,
-      "attachment": "http://upload1.location",
-      "connectors": {
-        "1": {
-          "title": "",
-          "type": "simple",
-          "linkTo": 2
-        }
-      }
-    },
-    "2": {
-      "title": "",
-      "id": 2,
-      "description": "",
-      "type": "junction",
-      "stream": 1,
-      "attachment": "http://upload1.location",
-      "connectors": {
-        "1": {
-          "title": "",
-          "type": "simple",
-          "linkTo": 3
-        }
-      }
-    },
-    "3": {
-      "title": "Fully Paid?",
-      "id": 3,
-      "description": "",
-      "type": "decision",
-      "stream": 2,
-      "attachment": "http://upload1.location",
-      "connectors": {
-        "1": {
-          "title": "Connector 5 Name",
-          "type": "simple",
-          "linkTo": 4
-        },
-        "2": {
-          "title": "Connector 4 Name",
-          "type": "simple",
-          "linkTo": 5
-        }
-      }
-    },
-    "4": {
-      "title": "Send Invoice to Buyer",
-      "id": 4,
-      "description": "",
-      "type": "process-simple",
-      "stream": 1,
-      "attachment": "http://upload1.location",
-      "connectors": {
-        "1": {
-          "title": "",
-          "type": "simple",
-          "linkTo": 6
-        }
-      }
-    },
-    "5": {
-      "title": "Email buyer ask for full payment",
-      "id": 5,
-      "description": "",
-      "type": "process-simple",
-      "stream": 1,
-      "attachment": "http://upload1.location",
-      "connectors": {
-        "1": {
-          "title": "",
-          "type": "simple",
-          "linkTo": 2
-        }
-      }
-    },
-    "6": {
-      "title": "Send Shipment notice to Buyer",
-      "id": 6,
-      "description": "",
-      "type": "finish",
-      "stream": 1,
-      "attachment": "http://upload1.location",
-      "connectors": {}
-    }
-  },
-  "streams": {
-    "1": {
-      "id": 1,
-      "title": "HR Staff",
-      "order": "1"
-    }
-  }
-}];
+
+
 
 //define global variables;
 var defColor      = '#337ab7';
@@ -116,43 +18,53 @@ var defElWidth    = 100;
 var defElHeight   = 40;
 var linkWidth     = 50;
 var currentStep   = 1;
-for(index in jsondata[0].items){    
-    var item = jsondata[0].items[index];
-    if(item.type=='start'){
-        drawRoundRect(svg,30,30,120,40,item.title,defColor);
-        svg.append("path")
-        .attr("d", drawArrow(153, 50, 45));            
-    }
-    if(item.type=='junction'){
-        drawJunctionOperator(svg,200,35,defColor,15);
-        drawOrSplitOperator(svg,200,175,defColor,15);
-        svg.append("path")
-        .attr("d", drawArrow(238, 50, 52));
-    }
+var padding       = 5;
+var nextX = 0;
+var nextY = 40;
+var itemsData = [];
 
-    if(item.type=='decision'){
-        drawRohumbus(svg,260,40,60,defColor,5,item.title);        
-        svg.append("path").attr("d", drawArrow(383, 50, 50));
-        svg.append("path").attr("d", drawArrow2(340, 95, 340,120));        
-    }
+d3.json('assets/jsondata.json',function(data){    
+    itemsData = data[0].items;
+    parseJson(itemsData);
+    drawElement(0,40,itemsData[currentStep], currentStep);
+})
+// for(index in jsondata[0].items){    
+//     var item = jsondata[0].items[index];
+//     if(item.type=='start'){
+//         drawRoundRect(svg,30,30,120,40,item.title,defColor);
+//         svg.append("path")
+//         .attr("d", drawArrow(153, 50, 45));            
+//     }
+//     if(item.type=='junction'){
+//         drawJunctionOperator(svg,200,35,defColor,15);
+//         drawOrSplitOperator(svg,200,175,defColor,15);
+//         svg.append("path")
+//         .attr("d", drawArrow(238, 50, 52));
+//     }
 
-    if(item.type=='process-simple'&& item.id==4){    
-        drawConnectorOperator(svg,260,40,defColor,40,item.title)    
-        drawRect(svg,440,30,120,40,defColor,item.title);
-        svg.append("path")
-        .attr("d", drawArrow(563, 50, 70));
-    }
+//     if(item.type=='decision'){
+//         drawRohumbus(svg,260,40,60,defColor,5,item.title);        
+//         svg.append("path").attr("d", drawArrow(383, 50, 50));
+//         svg.append("path").attr("d", drawArrow2(340, 95, 340,120));        
+//     }
 
-    if(item.type=='process-simple'&& item.id==5){        
-        drawRect(svg,280,130,120,40,defColor,item.title);
-        svg.append("path")
-            .attr("d", drawArrow3(275, 150, 215,75));
-    }
+//     if(item.type=='process-simple'&& item.id==4){    
+//         drawConnectorOperator(svg,260,40,defColor,40,item.title)    
+//         drawRect(svg,440,30,120,40,defColor,item.title);
+//         svg.append("path")
+//         .attr("d", drawArrow(563, 50, 70));
+//     }
 
-    if(item.type=='finish'){        
-        drawRoundRect(svg,640,30,120,40,item.title,priColor);
-    }
-}
+//     if(item.type=='process-simple'&& item.id==5){        
+//         drawRect(svg,280,130,120,40,defColor,item.title);
+//         svg.append("path")
+//             .attr("d", drawArrow3(275, 150, 215,75));
+//     }
+
+//     if(item.type=='finish'){        
+//         drawRoundRect(svg,640,30,120,40,item.title,priColor);
+//     }
+// }
 
 //draw rectangle
 function drawRect(container, x,y, width, height,color,text){
@@ -232,25 +144,27 @@ function drawOrSplitOperator(container, x, y, color, rx){
 }
 
 function drawJunctionOperator(container, x, y, color, rx){
-    var g = container.append('g').attr('class','g_wrapper');
+    var g = container.append('g').attr('class','g_wrapper').attr('transform',function(){
+        return "translate("+x+","+y+")";        
+    });
     g.append("circle")
         .attr('r',rx)
-        .attr("cx", (x+rx))
-        .attr("cy", (y+rx))        
+        .attr("cx", rx)
+        .attr("cy", rx)        
         .attr('stroke', color);        
     g.append('line')
-        .attr('x1',x+5)
-        .attr('y1',y+5)
-        .attr('x2',(x+2*rx -5))
-        .attr('y2',(y+2*rx - 5))
+        .attr('x1',5)
+        .attr('y1',5)
+        .attr('x2',(2*rx -5))
+        .attr('y2',(2*rx - 5))
         .attr('stroke',defColor)
         .attr('stroke-width','3px');
 
     g.append('line')
-        .attr('x1',x+5)
-        .attr('y1',(y+2*rx - 5))
-        .attr('x2',(x+2*rx -5))
-        .attr('y2',y+5)
+        .attr('x1',5)
+        .attr('y1',(2*rx - 5))
+        .attr('x2',(2*rx -5))
+        .attr('y2',5)
         .attr('stroke',defColor)
         .attr('stroke-width','3px');
 }
@@ -326,20 +240,56 @@ function wrap(text, width) {
   });
 }
 
-parseJson(jsondata);
 function parseJson(jsondata){    
-    totalItemsCnt = Object.keys(jsondata[0].items).length;    
+    totalItemsCnt = Object.keys(jsondata).length;    
     var connectorsArray = [];
-    for(index in jsondata[0].items){            
-        connectorsArray.push(Object.keys(jsondata[0].items[index].connectors).length);        
+    for(index in jsondata){            
+        connectorsArray.push(Object.keys(jsondata[index].connectors).length);        
     }   
     depth = d3.max(connectorsArray);
-    defElWidth = width / (totalItemsCnt - depth + 1) - linkWidth;
+    defElWidth = width / (totalItemsCnt - depth + 1) - linkWidth;    
     console.log(defElWidth);
-    console.log(totalItemsCnt);
-    console.log(depth);
 }
 
-function drawElement(startX,startY,data){
-
+function drawElement(startX,startY,data,step){  
+    step++;        
+    switch(data.type) {
+        case 'start':
+            drawRoundRect(svg,startX,startY,defElWidth,40,data.title,defColor);
+            nextX = startX + defElWidth + linkWidth + padding;            
+            break;
+        case 'finish':
+            drawRoundRect(svg,startX,startY,defElWidth,40,data.title,priColor);
+            nextX = startX + defElWidth + linkWidth + padding;            
+            break;
+        case 'process-simple':
+            drawRect(svg,startX,startY,120,40,defColor,data.title);    
+            nextX = startX + defElWidth + linkWidth + padding;            
+            break;
+        case 'decision':
+            drawRohumbus(svg,startX,startY,60,defColor,5,data.title);   
+            nextX = startX + defElWidth + linkWidth + padding;            
+            break;        
+        case 'connector-start':
+            drawConnectorOperator(svg,startX,startY,defColor,40,data.title)     
+            nextX = startX + defElWidth + linkWidth + padding;            
+            break;          
+        case 'connector-end':
+            drawConnectorOperator(svg,startX,startY,priColor,40,data.title)     
+            nextX = startX + defElWidth + linkWidth + padding;            
+            break;            
+        case 'or-split':
+            drawOrSplitOperator(svg,startX,startY,defColor,15);    
+            nextX = startX + defElWidth + linkWidth + padding;            
+            break;          
+        case 'junction':
+            drawJunctionOperator(svg,startX,startY,defColor,15);
+            nextX = startX + defElWidth + linkWidth + padding;            
+            break;  
+        default:
+            break;
+    }     
+    if(step<=totalItemsCnt){        
+        drawElement(nextX, nextY, itemsData[step],step);
+    }    
 }
