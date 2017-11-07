@@ -134,7 +134,8 @@ for(index in jsondata[0].items){
 
     if(item.type=='process-simple'&& item.id==5){        
         drawRect(svg,280,130,120,40,defColor,item.title);
-
+        svg.append("path")
+            .attr("d", drawArrow3(275, 150, 215,75));
     }
 
     if(item.type=='finish'){        
@@ -240,6 +241,18 @@ function drawArrow2(startX, startY, endX, endY) {
         "L" + (endX) + ',' + (endY + 5) +
         "L" + (endX -5) + ',' + (endY) +        
         "h" + (5);        
+}
+
+function drawArrow3(startX, startY, endX, endY) {
+    var qVH = 3;
+    var ahwidth = 5;
+    return "M" + startX + "," + startY +        
+        "h" + (endX-startX) +
+        "v" + (endY-startY) +
+        "h" + (-5) +
+        "L" + (endX) + ',' + (endY -5) +
+        "L" + (endX+5) + ',' + (endY) +
+        "h" + (-5);
 }
 
 function wrap(text, width) {
