@@ -28,3 +28,7 @@ text{
 	font-size: 10px;
 	text-anchor: middle;
 }
+
+circle{
+	fill: none;
+}
