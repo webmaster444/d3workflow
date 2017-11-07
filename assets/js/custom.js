@@ -4,6 +4,8 @@ var svg = d3.select("#content").append("svg")
     .append("g")
     .attr("transform", "translate(30,10)");
 
+var width = 970 - 30;
+var height = 570 - 10;
 var jsondata = [{
   "items": {
     "1": {
@@ -112,7 +114,8 @@ var totalItemsCnt = 0;
 var depth         = 0;
 var defElWidth    = 100;
 var defElHeight   = 40;
-
+var linkWidth     = 50;
+var currentStep   = 1;
 for(index in jsondata[0].items){    
     var item = jsondata[0].items[index];
     if(item.type=='start'){
@@ -122,17 +125,19 @@ for(index in jsondata[0].items){
     }
     if(item.type=='junction'){
         drawJunctionOperator(svg,200,35,defColor,15);
+        drawOrSplitOperator(svg,200,175,defColor,15);
         svg.append("path")
         .attr("d", drawArrow(238, 50, 52));
     }
 
     if(item.type=='decision'){
-        drawRohumbus(svg,260,40,60,defColor,5,item.title);
+        drawRohumbus(svg,260,40,60,defColor,5,item.title);        
         svg.append("path").attr("d", drawArrow(383, 50, 50));
         svg.append("path").attr("d", drawArrow2(340, 95, 340,120));        
     }
 
-    if(item.type=='process-simple'&& item.id==4){        
+    if(item.type=='process-simple'&& item.id==4){    
+        drawConnectorOperator(svg,260,40,defColor,40,item.title)    
         drawRect(svg,440,30,120,40,defColor,item.title);
         svg.append("path")
         .attr("d", drawArrow(563, 50, 70));
@@ -200,6 +205,32 @@ function drawRohumbus(container, x, y, width, color, rx,text){
     return res;
 }
 
+function drawOrSplitOperator(container, x, y, color, rx){
+    var g = container.append('g').attr('class','g_wrapper').attr('transform',function(){
+        return "translate("+x+","+y+")";        
+    });
+    g.append("circle")
+        .attr('r',rx)
+        .attr("cx", rx)
+        .attr("cy", rx)
+        .attr('stroke', color);        
+    g.append('line')
+        .attr('x1',0)
+        .attr('y1',rx)
+        .attr('x2',(2*rx))
+        .attr('y2',(rx))
+        .attr('stroke',defColor)
+        .attr('stroke-width','3px');
+
+    g.append('line')
+        .attr('x1',rx)
+        .attr('y1',0)
+        .attr('x2',rx)
+        .attr('y2',2*rx)
+        .attr('stroke',defColor)
+        .attr('stroke-width','3px');
+}
+
 function drawJunctionOperator(container, x, y, color, rx){
     var g = container.append('g').attr('class','g_wrapper');
     g.append("circle")
@@ -224,6 +255,17 @@ function drawJunctionOperator(container, x, y, color, rx){
         .attr('stroke-width','3px');
 }
 
+function drawConnectorOperator(container, x, y, color, rx, text){
+    var g = container.append('g').attr('class','g_wrapper').attr('transform',function(){
+        return "translate("+x+","+y+")";        
+    });
+    g.append("circle")
+        .attr('r',rx)
+        .attr("cx", 0)
+        .attr("cy", 0)        
+        .attr('stroke', color);        
+    g.append("text").text(text).attr('x',rx).attr('y',rx).attr('text-anchor','middle').attr('dy','.1em').call(wrap,2*rx);
+}
 //draw arrow
 function drawArrow(x, y, width) {
     var qVH = 3;
@@ -292,6 +334,12 @@ function parseJson(jsondata){
         connectorsArray.push(Object.keys(jsondata[0].items[index].connectors).length);        
     }   
     depth = d3.max(connectorsArray);
+    defElWidth = width / (totalItemsCnt - depth + 1) - linkWidth;
+    console.log(defElWidth);
     console.log(totalItemsCnt);
     console.log(depth);
+}
+
+function drawElement(startX,startY,data){
+
 }
