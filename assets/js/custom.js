@@ -105,8 +105,14 @@ var jsondata = [{
   }
 }];
 
-var defColor = '#337ab7';
-var priColor = '#f0ad4e';
+//define global variables;
+var defColor      = '#337ab7';
+var priColor      = '#f0ad4e';
+var totalItemsCnt = 0;
+var depth         = 0;
+var defElWidth    = 100;
+var defElHeight   = 40;
+
 for(index in jsondata[0].items){    
     var item = jsondata[0].items[index];
     if(item.type=='start'){
@@ -278,6 +284,14 @@ function wrap(text, width) {
   });
 }
 
-function parseJson(jsondata){
-    
+parseJson(jsondata);
+function parseJson(jsondata){    
+    totalItemsCnt = Object.keys(jsondata[0].items).length;    
+    var connectorsArray = [];
+    for(index in jsondata[0].items){            
+        connectorsArray.push(Object.keys(jsondata[0].items[index].connectors).length);        
+    }   
+    depth = d3.max(connectorsArray);
+    console.log(totalItemsCnt);
+    console.log(depth);
 }
