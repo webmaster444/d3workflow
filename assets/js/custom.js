@@ -122,8 +122,8 @@ for(index in jsondata[0].items){
 
     if(item.type=='decision'){
         drawRotatedRoundSquare(svg,260,40,60,defColor,5,item.title);
-        svg.append("path")
-            .attr("d", drawArrow(383, 50, 50));
+        svg.append("path").attr("d", drawArrow(383, 50, 50));
+        svg.append("path").attr("d", drawArrow2(340, 95, 340,120));        
     }
 
     if(item.type=='process-simple'&& item.id==4){        
@@ -231,16 +231,16 @@ function drawArrow(x, y, width) {
         "v" + (-qVH);        
 }
 
-// function drawArrow(startX, startY, endX, endY) {
-//     var qVH = 3;
-//     var ahwidth = 5;
-//     return "M" + startX + "," + startY +
-//         "h" + (endX - startX) +
-//         "v" + (-qVH) +
-//         "L" + (x + width) + ',' + y +
-//         "L" + (x + width - ahwidth) + ',' + (y + qVH) +
-//         "v" + (-qVH);        
-// }
+function drawArrow2(startX, startY, endX, endY) {
+    var qVH = 3;
+    var ahwidth = 5;
+    return "M" + startX + "," + startY +        
+        "v" + (endY-startY) +
+        "h" + 5 +
+        "L" + (endX) + ',' + (endY + 5) +
+        "L" + (endX -5) + ',' + (endY) +        
+        "h" + (5);        
+}
 
 function wrap(text, width) {
   text.each(function() {
