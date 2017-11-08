@@ -22,12 +22,14 @@ var nextY = 40;
 var itemsData = [];
 var drawedItemsArray = [];
 var linksData = [];
-d3.json('assets/jsondata2.json',function(data){    
+d3.json('assets/jsondata.json',function(data){    
     itemsData = data[0].items;
     parseJson(itemsData);
     drawElement(0,40,itemsData[currentStep], currentStep);
     drawLinks(itemsData);
 })
+
+var junctionOperatorRadius = 20;
 
 //draw rectangle
 function drawRect(id, x,y, width, height,color,text){
@@ -142,10 +144,13 @@ function drawConnectorOperator(id, x, y, color, rx, text){
         .attr('stroke', color);        
     g.append("text").text(text).attr('x',rx).attr('y',rx/2).attr('text-anchor','middle').attr('dy','.1em').call(wrap,2*rx);
 }
-//draw arrow
+
+//Default left-right arrow
 function drawArrow(x, y, nX,nY) {
     var qVH = 3;
     var ahwidth = 5;
+    x+= defElWidth;
+    y+= defElHeight/2;
     return "M" + x + "," + y +
         "h" + (nX- x - ahwidth) +
         "v" + (-qVH) +
@@ -154,20 +159,25 @@ function drawArrow(x, y, nX,nY) {
         "v" + (-qVH);        
 }
 
+//Arrow - Decision to Vertical Element
 function drawArrow2(startX, startY, endX, endY) {
-    var qVH = 3;
-    var ahwidth = 5;
+    var qVH = 3;    
+    startX += 50;
+    startY += 75;
     return "M" + startX + "," + startY +        
-        "v" + (endY-startY) +
+        "v" + (endY-startY - defElHeight/2) +
         "h" + 5 +
-        "L" + (endX) + ',' + (endY + 5) +
-        "L" + (endX -5) + ',' + (endY) +        
+        "L" + (startX) + ',' + (endY - defElHeight/2+ 5) +
+        "L" + (startX -5) + ',' + (endY-defElHeight/2) +        
         "h" + (5);        
 }
 
+//Arrow - bottom to top left
 function drawArrow3(startX, startY, endX, endY) {
-    var qVH = 3;
-    var ahwidth = 5;
+    var qVH = 3;    
+    endX += junctionOperatorRadius;
+    startY += defElHeight/2;
+    endY += 2*junctionOperatorRadius + 8;
     return "M" + startX + "," + startY +        
         "h" + (endX-startX) +
         "v" + (endY-startY) +
@@ -303,9 +313,10 @@ function drawLinks(itemsData){
             startY = d3.select('#item'+fromId).attr('startY');
             var toId = itemsData[index].connectors[connector].linkTo;
             endX = d3.select('#item'+toId).attr('startX');
-            endY = d3.select('#item'+toId).attr('startY');            
+            endY = d3.select('#item'+toId).attr('startY'); 
+            var nodeType = itemsData[index].type;           
             // endY = d3.select('#item'+toId).attr('startY');
-            svg.append('path').attr("d",selectArrow(parseInt(startX),parseInt(startY),parseInt(endX),parseInt(endY))).attr("fill", "none");
+            svg.append('path').attr("d",selectArrow(parseInt(startX),parseInt(startY),parseInt(endX),parseInt(endY),nodeType)).attr("fill", "none");
         }
     } 
 }
