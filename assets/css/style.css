@@ -3,8 +3,7 @@ body {
   width: 1600px;
 }
 
-path {
-  fill: white;
+path {  
   stroke: #000;
   stroke-width: 1.5px;
 }

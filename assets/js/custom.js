@@ -22,10 +22,11 @@ var nextY = 40;
 var itemsData = [];
 var drawedItemsArray = [];
 var linksData = [];
-d3.json('assets/jsondata2.json',function(data){    
+d3.json('assets/jsondata.json',function(data){    
     itemsData = data[0].items;
     parseJson(itemsData);
     drawElement(0,40,itemsData[currentStep], currentStep);
+    drawLinks(itemsData);
 })
 
 //draw rectangle
@@ -66,7 +67,7 @@ function drawRoundRect(id, x, y, width, height, text,color, rx){
 function drawRhombus(id, x, y, width, color, rx,text){
     var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
         return "translate("+x+","+y+")";        
-    }).attr('startX',x).attr('startY',y).attr('endX',x+width).attr('endY',y+width);    
+    }).attr('startX',x).attr('startY',y).attr('endX',x+2*width).attr('endY',y+width);    
     var res =  g.append("polygon")
         .attr('points',function(){
             return 0 +',' + defElHeight/2 + ' ' + width + ',' + (-width+defElHeight/2) + ' ' + (2*width) + ',' + defElHeight/2 + ' ' +width +',' + (width+defElHeight/2)
@@ -107,7 +108,7 @@ function drawOrSplitOperator(id, x, y, color, rx){
 function drawJunctionOperator(id, x, y, color, rx){
     var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
         return "translate("+x+","+y+")";        
-    }).attr('startX',x).attr('startY',y).attr('endX',x+rx).attr('endY',y+rx);
+    }).attr('startX',x).attr('startY',y).attr('endX',x+2*rx).attr('endY',y+rx);
     g.append("circle")
         .attr('r',rx)
         .attr("cx", rx)
@@ -133,7 +134,7 @@ function drawJunctionOperator(id, x, y, color, rx){
 function drawConnectorOperator(id, x, y, color, rx, text){
     var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
         return "translate("+x+","+y+")";        
-    }).attr('startX',x).attr('startY',y).attr('endX',x+rx).attr('endY',y+rx);
+    }).attr('startX',x).attr('startY',y).attr('endX',x+2*rx).attr('endY',y+rx);
     g.append("circle")
         .attr('r',rx)
         .attr("cx", rx)
@@ -149,7 +150,7 @@ function drawArrow(x, y, nX,nY) {
         "h" + (nX- x - ahwidth) +
         "v" + (-qVH) +
         "L" + (nX) + ',' + y +
-        "L" + (nX - ahwidth) + ',' + (y + qVH) +
+        "L" + (nX - ahwidth) + ',' + (parseInt(y) + qVH) +
         "v" + (-qVH);        
 }
 
@@ -211,21 +212,22 @@ function parseJson(jsondata){
     defElWidth = width / (totalItemsCnt - depth + 1) - linkWidth;        
 }
 
-
 function selectArrow(startX,startY,endX,endY){
     if(startY == endY){
         if((endX - startX) > 2* defElWidth){
 
         }else{
+
             return drawArrow(startX,startY,endX,endY);
         }
     }
 
     if(startX == endX){
-
+        return drawArrow2(startX,startY,endX,endY);
     }
 
     if((endX < startX) && (endY < startY)){
+        console.log('3333');
         return drawArrow3(startX,startY,endX,endY);
     }
 }
@@ -290,4 +292,19 @@ function drawElement(startX,startY,data,step){
             drawElement(nextX, nextY, itemsData[nextStep],nextStep);        
         }
     }
+}
+
+function drawLinks(itemsData){    
+    for(index in itemsData){            
+        for(connector in itemsData[index].connectors){
+            var fromId = itemsData[index].id;
+            startX = d3.select('#item'+fromId).attr('endX');
+            startY = d3.select('#item'+fromId).attr('startY');
+            var toId = itemsData[index].connectors[connector].linkTo;
+            endX = d3.select('#item'+toId).attr('startX');
+            endY = d3.select('#item'+toId).attr('startY');            
+            // endY = d3.select('#item'+toId).attr('startY');
+            svg.append('path').attr("d",selectArrow(startX,startY,endX,endY)).attr("fill", "none");
+        }
+    } 
 }
