@@ -21,7 +21,8 @@ var nextX = 0;
 var nextY = 40;
 var itemsData = [];
 var drawedItemsArray = [];
-d3.json('assets/jsondata.json',function(data){    
+var linksData = [];
+d3.json('assets/jsondata2.json',function(data){    
     itemsData = data[0].items;
     parseJson(itemsData);
     drawElement(0,40,itemsData[currentStep], currentStep);
@@ -31,7 +32,7 @@ d3.json('assets/jsondata.json',function(data){
 function drawRect(id, x,y, width, height,color,text){
     var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
         return "translate("+x+","+y+")";        
-    });;
+    }).attr('startX',x).attr('startY',y).attr('endX',x+width).attr('endY',y+height);
     var res = g.append("rect")
         .attr("x", 0)
         .attr("y", 0)
@@ -62,10 +63,10 @@ function drawRoundRect(id, x, y, width, height, text,color, rx){
 }
 
 //draw round square and rotate
-function drawRohumbus(id, x, y, width, color, rx,text){
+function drawRhombus(id, x, y, width, color, rx,text){
     var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
         return "translate("+x+","+y+")";        
-    });      
+    }).attr('startX',x).attr('startY',y).attr('endX',x+width).attr('endY',y+width);    
     var res =  g.append("polygon")
         .attr('points',function(){
             return 0 +',' + defElHeight/2 + ' ' + width + ',' + (-width+defElHeight/2) + ' ' + (2*width) + ',' + defElHeight/2 + ' ' +width +',' + (width+defElHeight/2)
@@ -80,7 +81,7 @@ function drawRohumbus(id, x, y, width, color, rx,text){
 function drawOrSplitOperator(id, x, y, color, rx){
     var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
         return "translate("+x+","+y+")";        
-    });
+    }).attr('startX',x).attr('startY',y).attr('endX',x+rx).attr('endY',y+rx);
     g.append("circle")
         .attr('r',rx)
         .attr("cx", rx)
@@ -106,7 +107,7 @@ function drawOrSplitOperator(id, x, y, color, rx){
 function drawJunctionOperator(id, x, y, color, rx){
     var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
         return "translate("+x+","+y+")";        
-    });
+    }).attr('startX',x).attr('startY',y).attr('endX',x+rx).attr('endY',y+rx);
     g.append("circle")
         .attr('r',rx)
         .attr("cx", rx)
@@ -132,7 +133,7 @@ function drawJunctionOperator(id, x, y, color, rx){
 function drawConnectorOperator(id, x, y, color, rx, text){
     var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
         return "translate("+x+","+y+")";        
-    });
+    }).attr('startX',x).attr('startY',y).attr('endX',x+rx).attr('endY',y+rx);
     g.append("circle")
         .attr('r',rx)
         .attr("cx", rx)
@@ -243,7 +244,7 @@ function drawElement(startX,startY,data,step){
             drawRect(data.id,startX,startY,defElWidth,40,defColor,data.title);    
             break;
         case 'decision':
-            drawRohumbus(data.id,startX,startY,50,defColor,5,data.title);   
+            drawRhombus(data.id,startX,startY,50,defColor,5,data.title);   
             break;        
         case 'connector-start':
             drawConnectorOperator(data.id,startX,startY,defColor,40,data.title)     
