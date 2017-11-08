@@ -22,7 +22,7 @@ var nextY = 40;
 var itemsData = [];
 var drawedItemsArray = [];
 var linksData = [];
-d3.json('assets/jsondata.json',function(data){    
+d3.json('assets/jsondata2.json',function(data){    
     itemsData = data[0].items;
     parseJson(itemsData);
     drawElement(0,40,itemsData[currentStep], currentStep);
@@ -217,12 +217,13 @@ function selectArrow(startX,startY,endX,endY){
         if((endX - startX) > 2* defElWidth){
 
         }else{
-
+            console.log('1111');
             return drawArrow(startX,startY,endX,endY);
         }
     }
 
     if(startX == endX){
+        console.log('2222');
         return drawArrow2(startX,startY,endX,endY);
     }
 
@@ -298,13 +299,13 @@ function drawLinks(itemsData){
     for(index in itemsData){            
         for(connector in itemsData[index].connectors){
             var fromId = itemsData[index].id;
-            startX = d3.select('#item'+fromId).attr('endX');
+            startX = d3.select('#item'+fromId).attr('startX');
             startY = d3.select('#item'+fromId).attr('startY');
             var toId = itemsData[index].connectors[connector].linkTo;
             endX = d3.select('#item'+toId).attr('startX');
             endY = d3.select('#item'+toId).attr('startY');            
             // endY = d3.select('#item'+toId).attr('startY');
-            svg.append('path').attr("d",selectArrow(startX,startY,endX,endY)).attr("fill", "none");
+            svg.append('path').attr("d",selectArrow(parseInt(startX),parseInt(startY),parseInt(endX),parseInt(endY))).attr("fill", "none");
         }
     } 
 }
