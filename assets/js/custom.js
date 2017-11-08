@@ -22,7 +22,7 @@ var nextY = 40;
 var itemsData = [];
 var drawedItemsArray = [];
 var linksData = [];
-d3.json('assets/jsondata.json',function(data){    
+d3.json('assets/jsondata2.json',function(data){    
     itemsData = data[0].items;
     parseJson(itemsData);
     drawElement(0,40,itemsData[currentStep], currentStep);
@@ -30,7 +30,7 @@ d3.json('assets/jsondata.json',function(data){
 })
 
 var junctionOperatorRadius = 20;
-
+var rhombusRadius = 50;
 //draw rectangle
 function drawRect(id, x,y, width, height,color,text){
     var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
@@ -146,11 +146,37 @@ function drawConnectorOperator(id, x, y, color, rx, text){
 }
 
 //Default left-right arrow
-function drawArrow(x, y, nX,nY) {
+function drawArrow(x, y, nX,nY,nodeType) {
+    console.log(nodeType);
     var qVH = 3;
     var ahwidth = 5;
-    x+= defElWidth;
-    y+= defElHeight/2;
+    switch(nodeType){
+        case 'start':
+            x+= defElWidth;
+            y+= defElHeight/2;
+            break;
+        case  'finish':
+            x+= defElWidth;
+            y+= defElHeight/2;
+            break;
+        case  'decision':
+            x+= 2*rhombusRadius;
+            y+= defElHeight/2;
+            break;
+        case  'process-simple':
+            x+= defElWidth;
+            y+= defElHeight/2;
+            break;            
+        case  'junction':
+            x+= 2*junctionOperatorRadius;
+            y+= defElHeight/2;
+            break;
+        case  'or-split':
+            x+= 2*junctionOperatorRadius;
+            y+= defElHeight/2;
+            break;            
+    }
+    
     return "M" + x + "," + y +
         "h" + (nX- x - ahwidth) +
         "v" + (-qVH) +
@@ -222,18 +248,16 @@ function parseJson(jsondata){
     defElWidth = width / (totalItemsCnt - depth + 1) - linkWidth;        
 }
 
-function selectArrow(startX,startY,endX,endY){
+function selectArrow(startX,startY,endX,endY,nodeType){
     if(startY == endY){
         if((endX - startX) > 2* defElWidth){
 
-        }else{
-            console.log('1111');
-            return drawArrow(startX,startY,endX,endY);
+        }else{            
+            return drawArrow(startX,startY,endX,endY,nodeType);
         }
     }
 
-    if(startX == endX){
-        console.log('2222');
+    if(startX == endX){        
         return drawArrow2(startX,startY,endX,endY);
     }
 
