@@ -51,23 +51,8 @@
       }
     },
     "4": {
-      "title": "Send Invoice to Buyer",
-      "id": 4,
-      "description": "",
-      "type": "process-simple",
-      "stream": 1,
-      "attachment": "http://upload1.location",
-      "connectors": {
-        "1": {
-          "title": "",
-          "type": "simple",
-          "linkTo": 6
-        }
-      }
-    },
-    "5": {
       "title": "Email buyer ask for full payment",
-      "id": 5,
+      "id": 4,
       "description": "",
       "type": "process-simple",
       "stream": 1,
@@ -80,6 +65,22 @@
         }
       }
     },
+    "5": {
+      "title": "Send Invoice to Buyer",
+      "id": 5,
+      "description": "",
+      "type": "process-simple",
+      "stream": 1,
+      "attachment": "http://upload1.location",
+      "connectors": {
+        "1": {
+          "title": "",
+          "type": "simple",
+          "linkTo": 6
+        }
+      }
+    },
+
     "6": {
       "title": "Send Shipment notice to Buyer",
       "id": 6,

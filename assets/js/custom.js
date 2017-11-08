@@ -7,8 +7,6 @@ var svg = d3.select("#content").append("svg")
 var width = 970 - 30;
 var height = 570 - 10;
 
-
-
 //define global variables;
 var defColor      = '#337ab7';
 var priColor      = '#f0ad4e';
@@ -28,47 +26,10 @@ d3.json('assets/jsondata.json',function(data){
     parseJson(itemsData);
     drawElement(0,40,itemsData[currentStep], currentStep);
 })
-// for(index in jsondata[0].items){    
-//     var item = jsondata[0].items[index];
-//     if(item.type=='start'){
-//         drawRoundRect(svg,30,30,120,40,item.title,defColor);
-//         svg.append("path")
-//         .attr("d", drawArrow(153, 50, 45));            
-//     }
-//     if(item.type=='junction'){
-//         drawJunctionOperator(svg,200,35,defColor,15);
-//         drawOrSplitOperator(svg,200,175,defColor,15);
-//         svg.append("path")
-//         .attr("d", drawArrow(238, 50, 52));
-//     }
-
-//     if(item.type=='decision'){
-//         drawRohumbus(svg,260,40,60,defColor,5,item.title);        
-//         svg.append("path").attr("d", drawArrow(383, 50, 50));
-//         svg.append("path").attr("d", drawArrow2(340, 95, 340,120));        
-//     }
-
-//     if(item.type=='process-simple'&& item.id==4){    
-//         drawConnectorOperator(svg,260,40,defColor,40,item.title)    
-//         drawRect(svg,440,30,120,40,defColor,item.title);
-//         svg.append("path")
-//         .attr("d", drawArrow(563, 50, 70));
-//     }
-
-//     if(item.type=='process-simple'&& item.id==5){        
-//         drawRect(svg,280,130,120,40,defColor,item.title);
-//         svg.append("path")
-//             .attr("d", drawArrow3(275, 150, 215,75));
-//     }
-
-//     if(item.type=='finish'){        
-//         drawRoundRect(svg,640,30,120,40,item.title,priColor);
-//     }
-// }
 
 //draw rectangle
-function drawRect(container, x,y, width, height,color,text){
-    var g = container.append('g').attr('class','g_wrapper').attr('transform',function(){
+function drawRect(id, x,y, width, height,color,text){
+    var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
         return "translate("+x+","+y+")";        
     });;
     var res = g.append("rect")
@@ -82,13 +43,13 @@ function drawRect(container, x,y, width, height,color,text){
 }
 
 //draw rounded rectangle
-function drawRoundRect(container, x, y, width, height, text,color, rx){
+function drawRoundRect(id, x, y, width, height, text,color, rx){
     if(rx==''||rx==undefined){
         rx = 3;
     }
-    var g = container.append('g').attr('class','g_wrapper').attr('transform',function(){
+    var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
         return "translate("+x+","+y+")";        
-    });
+    }).attr('startX',x).attr('startY',y).attr('endX',x+width).attr('endY',y+height);
     var res =  g.append("rect")
         .attr('ry',rx)
         .attr("x", 0)
@@ -101,23 +62,23 @@ function drawRoundRect(container, x, y, width, height, text,color, rx){
 }
 
 //draw round square and rotate
-function drawRohumbus(container, x, y, width, color, rx,text){
-    var g = container.append('g').attr('class','g_wrapper').attr('transform',function(){
+function drawRohumbus(id, x, y, width, color, rx,text){
+    var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
         return "translate("+x+","+y+")";        
     });      
     var res =  g.append("polygon")
         .attr('points',function(){
-            return 0 +',' + 0 + ' ' + width + ',' + (-width) + ' ' + (2*width) + ',' + 0 + ' ' +width +',' + width
+            return 0 +',' + defElHeight/2 + ' ' + width + ',' + (-width+defElHeight/2) + ' ' + (2*width) + ',' + defElHeight/2 + ' ' +width +',' + (width+defElHeight/2)
         })
         .attr('stroke', color)
         .attr('fill','white');
 
-    res += g.append("text").text(text).attr('x',width).attr('y',0).attr('text-anchor','middle').attr('dy','.1em').call(wrap,width);
+    res += g.append("text").text(text).attr('x',width).attr('y',defElHeight/2).attr('text-anchor','middle').attr('dy','.1em').call(wrap,width);
     return res;
 }
 
-function drawOrSplitOperator(container, x, y, color, rx){
-    var g = container.append('g').attr('class','g_wrapper').attr('transform',function(){
+function drawOrSplitOperator(id, x, y, color, rx){
+    var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
         return "translate("+x+","+y+")";        
     });
     g.append("circle")
@@ -142,8 +103,8 @@ function drawOrSplitOperator(container, x, y, color, rx){
         .attr('stroke-width','3px');
 }
 
-function drawJunctionOperator(container, x, y, color, rx){
-    var g = container.append('g').attr('class','g_wrapper').attr('transform',function(){
+function drawJunctionOperator(id, x, y, color, rx){
+    var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
         return "translate("+x+","+y+")";        
     });
     g.append("circle")
@@ -168,26 +129,26 @@ function drawJunctionOperator(container, x, y, color, rx){
         .attr('stroke-width','3px');
 }
 
-function drawConnectorOperator(container, x, y, color, rx, text){
-    var g = container.append('g').attr('class','g_wrapper').attr('transform',function(){
+function drawConnectorOperator(id, x, y, color, rx, text){
+    var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
         return "translate("+x+","+y+")";        
     });
     g.append("circle")
         .attr('r',rx)
         .attr("cx", rx)
-        .attr("cy", rx)        
+        .attr("cy", rx/2)        
         .attr('stroke', color);        
-    g.append("text").text(text).attr('x',rx).attr('y',rx).attr('text-anchor','middle').attr('dy','.1em').call(wrap,2*rx);
+    g.append("text").text(text).attr('x',rx).attr('y',rx/2).attr('text-anchor','middle').attr('dy','.1em').call(wrap,2*rx);
 }
 //draw arrow
-function drawArrow(x, y, width) {
+function drawArrow(x, y, nX,nY) {
     var qVH = 3;
     var ahwidth = 5;
     return "M" + x + "," + y +
-        "h" + (width - ahwidth) +
+        "h" + (nX- x - ahwidth) +
         "v" + (-qVH) +
-        "L" + (x + width) + ',' + y +
-        "L" + (x + width - ahwidth) + ',' + (y + qVH) +
+        "L" + (nX) + ',' + y +
+        "L" + (nX - ahwidth) + ',' + (y + qVH) +
         "v" + (-qVH);        
 }
 
@@ -249,33 +210,52 @@ function parseJson(jsondata){
     defElWidth = width / (totalItemsCnt - depth + 1) - linkWidth;        
 }
 
+
+function selectArrow(startX,startY,endX,endY){
+    if(startY == endY){
+        if((endX - startX) > 2* defElWidth){
+
+        }else{
+            return drawArrow(startX,startY,endX,endY);
+        }
+    }
+
+    if(startX == endX){
+
+    }
+
+    if((endX < startX) && (endY < startY)){
+        return drawArrow3(startX,startY,endX,endY);
+    }
+}
+
 function drawElement(startX,startY,data,step){  
     drawedItemsArray.push(step);
     // step++;        
     switch(data.type) {
         case 'start':
-            drawRoundRect(svg,startX,startY,defElWidth,40,data.title,defColor);
+            drawRoundRect(data.id,startX,startY,defElWidth,40,data.title,defColor);
             break;
         case 'finish':
-            drawRoundRect(svg,startX,startY,defElWidth,40,data.title,priColor);
+            drawRoundRect(data.id,startX,startY,defElWidth,40,data.title,priColor);
             break;
         case 'process-simple':
-            drawRect(svg,startX,startY,120,40,defColor,data.title);    
+            drawRect(data.id,startX,startY,defElWidth,40,defColor,data.title);    
             break;
         case 'decision':
-            drawRohumbus(svg,startX,startY,50,defColor,5,data.title);   
+            drawRohumbus(data.id,startX,startY,50,defColor,5,data.title);   
             break;        
         case 'connector-start':
-            drawConnectorOperator(svg,startX,startY,defColor,40,data.title)     
+            drawConnectorOperator(data.id,startX,startY,defColor,40,data.title)     
             break;          
         case 'connector-end':
-            drawConnectorOperator(svg,startX,startY,priColor,40,data.title)     
+            drawConnectorOperator(data.id,startX,startY,priColor,40,data.title)     
             break;            
         case 'or-split':
-            drawOrSplitOperator(svg,startX,startY,defColor,15);                
+            drawOrSplitOperator(data.id,startX,startY,defColor,20);                
             break;          
         case 'junction':
-            drawJunctionOperator(svg,startX,startY,defColor,15);            
+            drawJunctionOperator(data.id,startX,startY,defColor,20);            
             break;  
         default:
             break;
@@ -284,21 +264,18 @@ function drawElement(startX,startY,data,step){
     
     if(Object.keys(data.connectors).length == 2){
         nextX = startX;
-        nextY = startY + 80;
+        nextY = startY + 120;
     }else{
         nextX = startX + defElWidth + linkWidth + padding;
         nextY = startY;
-    }
+    }        
 
     if(Object.keys(data.connectors).length == 1){                
         nextStep = data.connectors[1].linkTo;
         if (drawedItemsArray.indexOf(nextStep)==-1){
             drawElement(nextX, nextY, itemsData[nextStep],nextStep);        
         }                
-    }    
-
-    // svg.append("path")
-        // .attr("d", drawArrow2(startX,startY,nextX,nextY));            
+    }        
 
     if(Object.keys(data.connectors).length == 2){                
         nextStep = data.connectors[1].linkTo;
