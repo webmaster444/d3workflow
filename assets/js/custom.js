@@ -22,7 +22,7 @@ var nextY = 40;
 var itemsData = [];
 var drawedItemsArray = [];
 var linksData = [];
-d3.json('assets/jsondata2.json',function(data){    
+d3.json('assets/jsondata3.json',function(data){    
     itemsData = data[0].items;
     parseJson(itemsData);
     drawElement(0,40,itemsData[currentStep], currentStep);
@@ -281,7 +281,7 @@ function drawElement(startX,startY,data,step){
             drawRect(data.id,startX,startY,defElWidth,40,defColor,data.title);    
             break;
         case 'decision':
-            drawRhombus(data.id,startX,startY,50,defColor,5,data.title);   
+            drawRhombus(data.id,startX,startY,rhombusRadius,defColor,5,data.title);   
             break;        
         case 'connector-start':
             drawConnectorOperator(data.id,startX,startY,defColor,40,data.title)     
