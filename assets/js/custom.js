@@ -22,7 +22,10 @@ var nextY = 40;
 var itemsData = [];
 var drawedItemsArray = [];
 var linksData = [];
-d3.json('assets/jsondata3.json',function(data){    
+var streamsArray = [];
+
+d3.json('assets/jsondata3.json',function(data){   
+    parseJsondata(data[0]);
     itemsData = data[0].items;
     parseJson(itemsData);
     drawElement(0,40,itemsData[currentStep], currentStep);
@@ -146,8 +149,7 @@ function drawConnectorOperator(id, x, y, color, rx, text){
 }
 
 //Default left-right arrow
-function drawArrow(x, y, nX,nY,nodeType) {
-    console.log(nodeType);
+function drawArrow(x, y, nX,nY,nodeType) {    
     var qVH = 3;
     var ahwidth = 5;
     switch(nodeType){
@@ -261,12 +263,10 @@ function selectArrow(startX,startY,endX,endY,nodeType){
         return drawArrow2(startX,startY,endX,endY);
     }
 
-    if((endX < startX) && (endY < startY)){
-        console.log('3333');
+    if((endX < startX) && (endY < startY)){        
         return drawArrow3(startX,startY,endX,endY);
     }
 }
-
 function drawElement(startX,startY,data,step){  
     drawedItemsArray.push(step);
     // step++;        
@@ -298,12 +298,14 @@ function drawElement(startX,startY,data,step){
         default:
             break;
     }     
-
     
     if(Object.keys(data.connectors).length == 2){
         nextX = startX;
         nextY = startY + 120;
-    }else{
+    }else if(Object.keys(data.connectors).length ==1){
+        console.log(data);
+        var nextIndex = data.connectors[1].linkTo;       
+        itemsData[] 
         nextX = startX + defElWidth + linkWidth + padding;
         nextY = startY;
     }        
@@ -343,4 +345,21 @@ function drawLinks(itemsData){
             svg.append('path').attr("d",selectArrow(parseInt(startX),parseInt(startY),parseInt(endX),parseInt(endY),nodeType)).attr("fill", "none");
         }
     } 
+}
+
+var totalDepth = 0;
+function parseJsondata(data){    
+    totalDepth += Object.keys(data.streams).length;
+    for(itemIndex in data.items){
+        var streamId = data.items[itemIndex].stream;
+        if(Object.keys(data.items[itemIndex].connectors).length ==2){
+            var firstLinkTo = data.items[itemIndex].connectors[1].linkTo;
+            var nextLinkTo = data.items[itemIndex].connectors[2].linkTo;
+            if(data.items[firstLinkTo].stream == data.items[nextLinkTo]){
+                totalDepth++;
+            }
+        }
+        
+    }    
+    console.log(totalDepth);
 }
