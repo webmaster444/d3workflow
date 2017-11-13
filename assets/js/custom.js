@@ -22,13 +22,15 @@ var nextY = 40;
 var itemsData = [];
 var drawedItemsArray = [];
 var linksData = [];
+var defStreamHeight = 0;
+var paddingY = 40;
 
-d3.json('assets/jsondata2.json',function(data){   
+d3.json('assets/jsondata.json',function(data){   
     drawStreamLayout(data[0]);
-    // itemsData = data[0].items;
-    // parseJson(itemsData);
-    // drawElement(0,40,itemsData[currentStep], currentStep);
-    // drawLinks(itemsData);
+    itemsData = data[0].items;
+    parseJson(itemsData);
+    drawElement(10,paddingY,itemsData[currentStep], currentStep);
+    drawLinks(itemsData);
 })
 
 var junctionOperatorRadius = 20;
@@ -190,12 +192,12 @@ function drawArrow(x, y, nX,nY,nodeType) {
 function drawArrow2(startX, startY, endX, endY) {
     var qVH = 3;    
     startX += 50;
-    startY += 75;
+    startY += 50;
     return "M" + startX + "," + startY +        
-        "v" + (endY-startY - defElHeight/2) +
+        "v" + (endY-startY - defElHeight/2 - 20) +
         "h" + 5 +
-        "L" + (startX) + ',' + (endY - defElHeight/2+ 5) +
-        "L" + (startX -5) + ',' + (endY-defElHeight/2) +        
+        "L" + (startX) + ',' + (endY - defElHeight/2+ 5 - 20) +
+        "L" + (startX -5) + ',' + (endY-defElHeight/2 - 20) +        
         "h" + (5);        
 }
 
@@ -298,34 +300,84 @@ function drawElement(startX,startY,data,step){
             break;
     }     
     
-    if(Object.keys(data.connectors).length == 2){
-        nextX = startX;
-        nextY = startY + 120;
-    }else if(Object.keys(data.connectors).length ==1){        
-        var nextIndex = data.connectors[1].linkTo;               
-        nextX = startX + defElWidth + linkWidth + padding;
-        nextY = startY;
-    }        
-
     if(Object.keys(data.connectors).length == 1){                
-        nextStep = data.connectors[1].linkTo;
+        var tmpConnector  = data.connectors[1];
+        nextStep = tmpConnector.linkTo;
+        nextItemData = itemsData[nextStep];
+        if(data.stream == nextItemData.stream){
+            nextX = startX + defElWidth + linkWidth + padding;
+            nextY = startY;
+        }else{
+            nextX = startX;
+            nextY =  defStreamHeight * (nextItemData.stream - 1) + paddingY;
+        }        
+
         if (drawedItemsArray.indexOf(nextStep)==-1){
-            drawElement(nextX, nextY, itemsData[nextStep],nextStep);        
-        }                
-    }        
+            drawElement(nextX, nextY, nextItemData,nextStep);        
+        } 
+    }
 
     if(Object.keys(data.connectors).length == 2){                
-        nextStep = data.connectors[1].linkTo;
-        if (drawedItemsArray.indexOf(nextStep)==-1){
-            drawElement(nextX, nextY, itemsData[nextStep],nextStep);        
-        }                
-        nextStep = data.connectors[2].linkTo;
-        if (drawedItemsArray.indexOf(nextStep)==-1){
-            nextY = startY;
+        //1st node
+        var tmpConnector  = data.connectors[1];
+        nextStep = tmpConnector.linkTo;
+        nextItemData = itemsData[nextStep];
+        if(data.stream == nextItemData.stream){
             nextX = startX + defElWidth + linkWidth + padding;
-            drawElement(nextX, nextY, itemsData[nextStep],nextStep);        
-        }
+            nextY = startY;
+        }else{
+            nextX = startX;
+            nextY =  defStreamHeight * (nextItemData.stream - 1) + paddingY;
+        }        
+
+        if (drawedItemsArray.indexOf(nextStep)==-1){
+            drawElement(nextX, nextY, nextItemData,nextStep);        
+        } 
+
+        //2nd node
+        var tmpConnector  = data.connectors[2];
+        nextStep = tmpConnector.linkTo;
+        nextItemData = itemsData[nextStep];
+        if(data.stream == nextItemData.stream){
+            nextX = startX;
+            nextY = startY + 120;
+        }else{
+            nextX = startX;
+            nextY = defStreamHeight * (nextItemData.stream - 1) + paddingY;
+        }        
+
+        if (drawedItemsArray.indexOf(nextStep)==-1){
+            drawElement(nextX, nextY, nextItemData,nextStep);        
+        } 
     }
+    // if(Object.keys(data.connectors).length == 2){
+    //     nextX = startX;
+    //     nextY = startY + 120;
+    // }else if(Object.keys(data.connectors).length ==1){        
+    //     var nextIndex = data.connectors[1].linkTo;               
+    //     nextX = startX + defElWidth + linkWidth + padding;
+    //     nextY = startY;
+    // }        
+
+    // if(Object.keys(data.connectors).length == 1){                
+    //     nextStep = data.connectors[1].linkTo;
+    //     if (drawedItemsArray.indexOf(nextStep)==-1){
+    //         drawElement(nextX, nextY, itemsData[nextStep],nextStep);        
+    //     }                
+    // }        
+
+    // if(Object.keys(data.connectors).length == 2){                
+    //     nextStep = data.connectors[1].linkTo;
+    //     if (drawedItemsArray.indexOf(nextStep)==-1){
+    //         drawElement(nextX, nextY, itemsData[nextStep],nextStep);        
+    //     }                
+    //     nextStep = data.connectors[2].linkTo;
+    //     if (drawedItemsArray.indexOf(nextStep)==-1){
+    //         nextY = startY;
+    //         nextX = startX + defElWidth + linkWidth + padding;
+    //         drawElement(nextX, nextY, itemsData[nextStep],nextStep);        
+    //     }
+    // }
 }
 
 function drawLinks(itemsData){    
@@ -348,6 +400,7 @@ function drawStreamLayout(data){
     var streamsData = data.streams;
     var streamsCnt = Object.keys(streamsData).length;
     
+    defStreamHeight = height / streamsCnt;
     var streamsArr = [];
     for(stream in streamsData){
         streamsArr.push({

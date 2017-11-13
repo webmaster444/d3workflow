@@ -35,7 +35,7 @@
       "id": 3,
       "description": "",
       "type": "decision",
-      "stream": 2,
+      "stream": 1,
       "attachment": "http://upload1.location",
       "connectors": {
         "1": {
