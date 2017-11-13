@@ -1,6 +1,9 @@
 //Append svg
-var svg = d3.select("#content").append("svg")    
+var svg = d3.select("#content").append("svg")
+    .attr('width','100%')
+    .attr('height','100%')
     .attr('viewBox', '0 0 970 570')
+    .attr('preserveAspectRatio','xMinYMin')
     .append("g")
     .attr("transform", "translate(30,10)");
 
