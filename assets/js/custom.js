@@ -27,6 +27,8 @@ var drawedItemsArray = [];
 var linksData = [];
 var defStreamHeight = 0;
 var paddingY = 40;
+var junctionOperatorRadius = 20;
+var rhombusRadius = 50;
 
 d3.json('assets/jsondata2.json',function(data){   
     drawStreamLayout(data[0]);
@@ -36,8 +38,6 @@ d3.json('assets/jsondata2.json',function(data){
     drawLinks(itemsData);
 })
 
-var junctionOperatorRadius = 20;
-var rhombusRadius = 50;
 //draw rectangle
 function drawRect(id, x,y, width, height,color,text){
     var g = svg.append('g').attr('id','item'+id).attr('class','g_wrapper').attr('transform',function(){
