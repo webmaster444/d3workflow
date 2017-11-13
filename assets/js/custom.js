@@ -22,14 +22,13 @@ var nextY = 40;
 var itemsData = [];
 var drawedItemsArray = [];
 var linksData = [];
-var streamsArray = [];
 
-d3.json('assets/jsondata3.json',function(data){   
-    parseJsondata(data[0]);
-    itemsData = data[0].items;
-    parseJson(itemsData);
-    drawElement(0,40,itemsData[currentStep], currentStep);
-    drawLinks(itemsData);
+d3.json('assets/jsondata2.json',function(data){   
+    drawStreamLayout(data[0]);
+    // itemsData = data[0].items;
+    // parseJson(itemsData);
+    // drawElement(0,40,itemsData[currentStep], currentStep);
+    // drawLinks(itemsData);
 })
 
 var junctionOperatorRadius = 20;
@@ -302,10 +301,8 @@ function drawElement(startX,startY,data,step){
     if(Object.keys(data.connectors).length == 2){
         nextX = startX;
         nextY = startY + 120;
-    }else if(Object.keys(data.connectors).length ==1){
-        console.log(data);
-        var nextIndex = data.connectors[1].linkTo;       
-        itemsData[] 
+    }else if(Object.keys(data.connectors).length ==1){        
+        var nextIndex = data.connectors[1].linkTo;               
         nextX = startX + defElWidth + linkWidth + padding;
         nextY = startY;
     }        
@@ -347,19 +344,40 @@ function drawLinks(itemsData){
     } 
 }
 
-var totalDepth = 0;
-function parseJsondata(data){    
-    totalDepth += Object.keys(data.streams).length;
-    for(itemIndex in data.items){
-        var streamId = data.items[itemIndex].stream;
-        if(Object.keys(data.items[itemIndex].connectors).length ==2){
-            var firstLinkTo = data.items[itemIndex].connectors[1].linkTo;
-            var nextLinkTo = data.items[itemIndex].connectors[2].linkTo;
-            if(data.items[firstLinkTo].stream == data.items[nextLinkTo]){
-                totalDepth++;
-            }
-        }
-        
-    }    
-    console.log(totalDepth);
+function drawStreamLayout(data){
+    var streamsData = data.streams;
+    var streamsCnt = Object.keys(streamsData).length;
+    
+    var streamsArr = [];
+    for(stream in streamsData){
+        streamsArr.push({
+            'id': streamsData[stream].id,
+            'order' : streamsData[stream].order,
+            'title': streamsData[stream].title
+        })      
+    };
+
+    var g_stream_wrapper = svg.selectAll(".stream")
+        .data(streamsArr)
+        .enter().append('g').attr('class','stream_wrapper');
+
+    g_stream_wrapper
+        .append("rect")
+        .attr("class","stream")
+        .attr("x",0)
+        .attr("y",function(d,i){                
+            return height / streamsCnt * i
+        }).attr('rx',6).attr('width',width).attr('height',function(d,i){
+            return height / streamsCnt;
+        }).attr('fill','none').attr('stroke','#ddd').attr('stroke-width','2px');
+
+    g_stream_wrapper.append('text')        
+        .attr('x',function(d,i){
+            return  -height / streamsCnt * i
+        })
+        .attr('y',0)
+        .style("text-anchor", "end")
+        .attr("dx", "-3.5em")
+        .attr("dy", "-.55em")
+        .attr("transform", "rotate(-90)" ).text(function(d){return d.title});
 }
