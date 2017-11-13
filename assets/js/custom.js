@@ -381,34 +381,6 @@ function drawElement(startX,startY,data,step){
             drawElement(nextX, nextY, nextItemData,nextStep);        
         } 
     }
-    // if(Object.keys(data.connectors).length == 2){
-    //     nextX = startX;
-    //     nextY = startY + 120;
-    // }else if(Object.keys(data.connectors).length ==1){        
-    //     var nextIndex = data.connectors[1].linkTo;               
-    //     nextX = startX + defElWidth + linkWidth + padding;
-    //     nextY = startY;
-    // }        
-
-    // if(Object.keys(data.connectors).length == 1){                
-    //     nextStep = data.connectors[1].linkTo;
-    //     if (drawedItemsArray.indexOf(nextStep)==-1){
-    //         drawElement(nextX, nextY, itemsData[nextStep],nextStep);        
-    //     }                
-    // }        
-
-    // if(Object.keys(data.connectors).length == 2){                
-    //     nextStep = data.connectors[1].linkTo;
-    //     if (drawedItemsArray.indexOf(nextStep)==-1){
-    //         drawElement(nextX, nextY, itemsData[nextStep],nextStep);        
-    //     }                
-    //     nextStep = data.connectors[2].linkTo;
-    //     if (drawedItemsArray.indexOf(nextStep)==-1){
-    //         nextY = startY;
-    //         nextX = startX + defElWidth + linkWidth + padding;
-    //         drawElement(nextX, nextY, itemsData[nextStep],nextStep);        
-    //     }
-    // }
 }
 
 function drawLinks(itemsData){    
