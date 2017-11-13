@@ -25,7 +25,7 @@ var linksData = [];
 var defStreamHeight = 0;
 var paddingY = 40;
 
-d3.json('assets/jsondata.json',function(data){   
+d3.json('assets/jsondata2.json',function(data){   
     drawStreamLayout(data[0]);
     itemsData = data[0].items;
     parseJson(itemsData);
@@ -188,17 +188,45 @@ function drawArrow(x, y, nX,nY,nodeType) {
         "v" + (-qVH);        
 }
 
+/*
+|-------|
+|       |
+V       |
+*/
+function drawArrow4(startX,startY,endX,endY){
+    startX += defElWidth /2;
+    return "M" + startX + "," + startY +        
+        "v" + (-35) + 
+        "h" + -(startX - endX - 20) +
+        "v" + 25 +         
+        "h" + 5 +
+        "L" + (endX +20) + ',' + (endY) +
+        "L" + (endX + 15) + ',' + (endY-10) +        
+        "h" + (5);  
+}
 //Arrow - Decision to Vertical Element
-function drawArrow2(startX, startY, endX, endY) {
+function drawArrow2(startX, startY, endX, endY, type) {
+
     var qVH = 3;    
     startX += 50;
-    startY += 50;
-    return "M" + startX + "," + startY +        
+    if(type =='decision'){
+        startY += 75;
+        return "M" + startX + "," + startY +        
+        "v" + (endY-startY - defElHeight/2) +
+        "h" + 5 +
+        "L" + (startX) + ',' + (endY - defElHeight/2+ 5 ) +
+        "L" + (startX -5) + ',' + (endY-defElHeight/2 ) +        
+        "h" + (5);  
+    }else{
+        startY += 50;
+            return "M" + startX + "," + startY +        
         "v" + (endY-startY - defElHeight/2 - 20) +
         "h" + 5 +
         "L" + (startX) + ',' + (endY - defElHeight/2+ 5 - 20) +
         "L" + (startX -5) + ',' + (endY-defElHeight/2 - 20) +        
-        "h" + (5);        
+        "h" + (5);  
+    }
+      
 }
 
 //Arrow - bottom to top left
@@ -253,15 +281,15 @@ function parseJson(jsondata){
 
 function selectArrow(startX,startY,endX,endY,nodeType){
     if(startY == endY){
-        if((endX - startX) > 2* defElWidth){
-
+        if(endX < startX){            
+            return drawArrow4(startX,startY,endX,endY);
         }else{            
             return drawArrow(startX,startY,endX,endY,nodeType);
         }
     }
 
     if(startX == endX){        
-        return drawArrow2(startX,startY,endX,endY);
+        return drawArrow2(startX,startY,endX,endY,nodeType);
     }
 
     if((endX < startX) && (endY < startY)){        
