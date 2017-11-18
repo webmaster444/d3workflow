@@ -10,7 +10,7 @@ var svg = d3.select("#content").append("svg")
 var width = 970 - 30;
 var height = 570 - 10;
 
-//define global variables;
+//define global variables
 var defColor = '#337ab7';
 var priColor = '#f0ad4e';
 var totalItemsCnt = 0;
@@ -330,7 +330,7 @@ function drawElement(startX, startY, data, step) {
         default:
             break;
     }
-
+    
     if (Object.keys(data.connectors).length == 1) {
         var tmpConnector = data.connectors[1];
         nextStep = tmpConnector.linkTo;
