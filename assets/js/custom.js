@@ -29,7 +29,7 @@ var paddingY = 40;
 var junctionOperatorRadius = 20;
 var rhombusRadius = 50;
 
-d3.json('assets/jsondata2.json', function(data) {
+d3.json('assets/jsondata.json', function(data) {
     drawStreamLayout(data[0]);
     itemsData = data[0].items;
     parseJson(itemsData);
@@ -145,10 +145,10 @@ function drawConnectorOperator(id, x, y, color, rx, text) {
     }).attr('startX', x).attr('startY', y).attr('endX', x + 2 * rx).attr('endY', y + rx);
     g.append("circle")
         .attr('r', rx)
-        .attr("cx", rx)
+        .attr("cx", rx+10)
         .attr("cy", rx / 2)
         .attr('stroke', color);
-    g.append("text").text(text).attr('x', rx).attr('y', rx / 2).attr('text-anchor', 'middle').attr('dy', '.1em').call(wrap, 2 * rx);
+    g.append("text").text(text).attr('x', rx+10).attr('y', rx / 2).attr('text-anchor', 'middle').attr('dy', '.1em').call(wrap, 2 * rx);
 }
 
 //Default left-right arrow
@@ -207,28 +207,30 @@ function drawArrow4(startX, startY, endX, endY) {
         "h" + (5);
 }
 //Arrow - Decision to Vertical Element
-function drawArrow2(startX, startY, endX, endY, type) {
-
-    var qVH = 3;
+function drawArrow2(startX, startY, endX, endY, type,nextType) {
+    var diffElHeight = 40;
     startX += 50;
     if (type == 'decision') {
-        startY += 75;
-        return "M" + startX + "," + startY +
-            "v" + (endY - startY - defElHeight / 2) +
-            "h" + 5 +
-            "L" + (startX) + ',' + (endY - defElHeight / 2 + 5) +
-            "L" + (startX - 5) + ',' + (endY - defElHeight / 2) +
-            "h" + (5);
-    } else {
-        startY += 50;
-        return "M" + startX + "," + startY +
-            "v" + (endY - startY - defElHeight / 2 - 20) +
-            "h" + 5 +
-            "L" + (startX) + ',' + (endY - defElHeight / 2 + 5 - 20) +
-            "L" + (startX - 5) + ',' + (endY - defElHeight / 2 - 20) +
-            "h" + (5);
+        startY += 70;        
+    } else if(type=="process-simple" || type=='start' || type=="finish"){
+        startY += 40;
+    }else if(type=='connector-start'){
+
     }
 
+    if(nextType == 'decision'){
+        diffElHeight = 70;           
+    }else if(nextType=='process-simple' || nextType=='start' || nextType=="finish"){
+        diffElHeight = 10;
+    }else if(nextType=='connector-start'||nextType=="connector-end"){
+        diffElHeight = 50;
+    }
+    return "M" + startX + "," + startY +
+        "v" + (endY - startY - diffElHeight / 2 ) +
+        "h" + 5 +
+        "L" + (startX) + ',' + (endY - diffElHeight / 2 + 5) +
+        "L" + (startX - 5) + ',' + (endY - diffElHeight / 2) +
+        "h" + (5);
 }
 
 //Arrow - bottom to top left
@@ -281,7 +283,7 @@ function parseJson(jsondata) {
     defElWidth = width / (totalItemsCnt - depth + 1) - linkWidth;
 }
 
-function selectArrow(startX, startY, endX, endY, nodeType) {
+function selectArrow(startX, startY, endX, endY, nodeType,nextType) {
     if (startY == endY) {
         if (endX < startX) {
             return drawArrow4(startX, startY, endX, endY);
@@ -291,7 +293,7 @@ function selectArrow(startX, startY, endX, endY, nodeType) {
     }
 
     if (startX == endX) {
-        return drawArrow2(startX, startY, endX, endY, nodeType);
+        return drawArrow2(startX, startY, endX, endY, nodeType,nextType);
     }
 
     if ((endX < startX) && (endY < startY)) {
@@ -393,14 +395,42 @@ function drawLinks(itemsData) {
             endX = d3.select('#item' + toId).attr('startX');
             endY = d3.select('#item' + toId).attr('startY');
             var nodeType = itemsData[index].type;
-            // endY = d3.select('#item'+toId).attr('startY');
-            svg.append('path').attr("d", selectArrow(parseInt(startX), parseInt(startY), parseInt(endX), parseInt(endY), nodeType)).attr("fill", "none");
+            var nextType = itemsData[toId].type;            
+            svg.append('path').attr("d", selectArrow(parseInt(startX), parseInt(startY), parseInt(endX), parseInt(endY), nodeType,nextType)).attr("fill", "none");
             
-            svg.append('text').attr('x',parseInt(endX)).attr('y',endY).attr('text-anchor','end').text(itemsData[index].connectors[connector].title);
+            appendLinkTitle(itemsData[index].connectors[connector].title,startX,startY,endX,endY);            
         }
     }
 }
 
+function appendLinkTitle(text,startX,startY,endX,endY){    
+    var poX,poY;
+    poY  = endY;
+    poX  = endX - 25;
+    var textWidth = 50;
+    var textAnchor = 'middle';
+    if (startY == endY) {
+        if (endX < startX) {
+            poY = parseInt(endY);
+            poX = startX - 50;
+        } else {
+            poY = parseInt(endY) + 30;
+        }
+    }
+
+    if (startX == endX) {
+        poY = endY - (endY-startY)/2 + rhombusRadius;
+        poX = parseInt(endX)+50;
+        textWidth = 150;
+        textAnchor = 'end';
+    }
+
+    if ((endX < startX) && (endY < startY)) {
+        poY = endY - (endY-startY)/2;
+    }
+
+    svg.append('text').attr('x',poX).attr('dx','-5px').attr('dy','-3px').attr('y',poY).style('text-anchor',textAnchor).text(text).style('font-size','8px').call(wrap,textWidth);
+}
 function drawStreamLayout(data) {
     var streamsData = data.streams;
     var streamsCnt = Object.keys(streamsData).length;

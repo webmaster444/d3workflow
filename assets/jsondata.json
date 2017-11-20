@@ -59,7 +59,7 @@
       "attachment": "http://upload1.location",
       "connectors": {
         "1": {
-          "title": "",
+          "title": "Test",
           "type": "simple",
           "linkTo": 2
         }
