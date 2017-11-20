@@ -395,6 +395,8 @@ function drawLinks(itemsData) {
             var nodeType = itemsData[index].type;
             // endY = d3.select('#item'+toId).attr('startY');
             svg.append('path').attr("d", selectArrow(parseInt(startX), parseInt(startY), parseInt(endX), parseInt(endY), nodeType)).attr("fill", "none");
+            
+            svg.append('text').attr('x',parseInt(endX)).attr('y',endY).attr('text-anchor','end').text(itemsData[index].connectors[connector].title);
         }
     }
 }
